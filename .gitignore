@@ -220,5 +220,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+#custom
 .DS_Store
+.measurements.md
 
