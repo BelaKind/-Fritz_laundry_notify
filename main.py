@@ -18,6 +18,8 @@ DEVICE_AIN = os.getenv("DEVICE_AIN")
 CALLMEBOT_APIKEY = os.getenv("CALLMEBOT_APIKEY")
 PHONE_NUMBER = os.getenv("PHONE_NUMBER")
 
+
+#I would recommend to use an extra Fritz!box user with limited rights
 fc = FritzConnection(address=FRITZ_BOX_IP, user=FRITZ_USERNAME, password=FRITZ_PASSWORD)
 fh = FritzHosts(fc)
 fha = FritzHomeAutomation(fc)
@@ -25,7 +27,7 @@ fha = FritzHomeAutomation(fc)
 
 automation_devices = fha.get_device_information_list()
 print_parameters = ['NewDeviceName', 'NewAIN', 'NewDeviceId', 'NewPresent']
-device_ain = DEVICE_AIN
+
 
 writingFile = False
 isWashing = False
@@ -53,7 +55,7 @@ def idle_measurements():
     global startTime
     while True:
         if not isWashing:
-                currentWatt = 60
+                currentWatt = return_power(DEVICE_AIN)
 
                 if currentWatt > 50:
 
@@ -61,10 +63,9 @@ def idle_measurements():
                         #sets the start time
                         startTime = time.time()
                     alreadyActiveTime = time.time() - startTime
-                    print(alreadyActiveTime)
                     #If the power is high enough over some time the washine machine was started
                     #That prevents from errors
-                    if alreadyActiveTime >= 30:                        
+                    if alreadyActiveTime >= 300:                        
                         isWashing = True
                         startTime = None
                         print("The washing machine is running")
@@ -82,11 +83,11 @@ def idle_measurements():
 def handle_washing():
     global isWashing
     while isWashing:
-        currentWatt = return_power(device_ain)
+        currentWatt = return_power(DEVICE_AIN)
         if currentWatt < 5:
             isWashing = False
             print("The washing machine is finished!")
-            notify_user("The+washing+machine+is+finished!") 
+            notify_user("The washing machine is finished!") 
             return 
         time.sleep(20)
 
@@ -96,7 +97,8 @@ def notify_user(message):
 
     #The phone number is the number of your whatsapp account 
     #You get the api key when setting up CallMeBot
-    url = f"https://api.callmebot.com/whatsapp.php?phone={PHONE_NUMBER}&text={message}&apikey={CALLMEBOT_APIKEY}"
+    encodedMessage = requests.utils.quote(message)
+    url = f"https://api.callmebot.com/whatsapp.php?phone={PHONE_NUMBER}&text={encodedMessage}&apikey={CALLMEBOT_APIKEY}"
 
     try:
         response = requests.get(url, timeout=10)
@@ -159,4 +161,5 @@ def main_program():
 #------------------------------------#
 
 if __name__ == '__main__':
+  notify_user("The washing machine is finished!") 
   main_program()
