@@ -1,5 +1,6 @@
 import os
 import time
+import threading
 
 from fritzconnection import FritzConnection
 from fritzconnection.lib.fritzhomeauto import FritzHomeAutomation
@@ -20,7 +21,6 @@ fha = FritzHomeAutomation(fc)
 
 automation_devices = fha.get_device_information_list()
 print_parameters = ['NewDeviceName', 'NewAIN', 'NewDeviceId', 'NewPresent']
-isRunning = True
 device_ain = DEVICE_AIN
 
 def scan_for_smarthome_devices():
