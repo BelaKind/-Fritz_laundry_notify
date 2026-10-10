@@ -34,6 +34,8 @@ def process_commands(userInput):
     elif (userInput.lower() == "stop_writing"):
         global writingFile 
         writingFile = False
+    elif (userInput.lower() == "print_devices"):
+        scan_for_smarthome_devices()
     else: 
         return
 
