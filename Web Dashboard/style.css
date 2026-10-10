@@ -1,0 +1,23 @@
+header {
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #5E7388; /*#5E7388*/
+}
+
+body {
+    margin: 0;
+    background-color: beige;
+    
+    
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
