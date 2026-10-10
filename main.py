@@ -161,5 +161,4 @@ def main_program():
 #------------------------------------#
 
 if __name__ == '__main__':
-  notify_user("The washing machine is finished!") 
   main_program()
