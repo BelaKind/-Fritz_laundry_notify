@@ -1,6 +1,7 @@
 import os
 import time
 import threading
+import requests
 from datetime import datetime
 
 from fritzconnection import FritzConnection
@@ -14,6 +15,8 @@ FRITZ_USERNAME = os.getenv("FRITZ_USERNAME")
 FRITZ_PASSWORD = os.getenv("FRITZ_PASSWORD")
 FRITZ_BOX_IP = os.getenv("FRITZ_BOX_IP")
 DEVICE_AIN = os.getenv("DEVICE_AIN")
+CALLMEBOT_APIKEY = os.getenv("CALLMEBOT_APIKEY")
+PHONE_NUMBER = os.getenv("PHONE_NUMBER")
 
 fc = FritzConnection(address=FRITZ_BOX_IP, user=FRITZ_USERNAME, password=FRITZ_PASSWORD)
 fh = FritzHosts(fc)
@@ -83,10 +86,27 @@ def handle_washing():
         if currentWatt < 5:
             isWashing = False
             print("The washing machine is finished!")
+            notify_user("The+washing+machine+is+finished!") 
             return 
         time.sleep(20)
 
+def notify_user(message):
+    #I use CallMeBot here because I wanted to use Whatsapp
+    #Maybe I will add other services here
 
+    #The phone number is the number of your whatsapp account 
+    #You get the api key when setting up CallMeBot
+    url = f"https://api.callmebot.com/whatsapp.php?phone={PHONE_NUMBER}&text={message}&apikey={CALLMEBOT_APIKEY}"
+
+    try:
+        response = requests.get(url, timeout=10)
+
+        if response.status_code == 200:
+            print("Message was sent successfully!")
+        else:
+            print(f"Failed to send. Statuscode: {response.status_code}")
+    except Exception as e:
+        print(f"Network error: {e}")
 
 
 #---------------commands------------------#
