@@ -1,6 +1,7 @@
 import os
 import time
 import threading
+from datetime import datetime
 
 from fritzconnection import FritzConnection
 from fritzconnection.lib.fritzhomeauto import FritzHomeAutomation
@@ -23,6 +24,40 @@ automation_devices = fha.get_device_information_list()
 print_parameters = ['NewDeviceName', 'NewAIN', 'NewDeviceId', 'NewPresent']
 device_ain = DEVICE_AIN
 
+
+
+    
+
+def process_commands(userInput):
+    if userInput.lower() == "write_file":
+        threading.Thread(target=write_file, daemon=True).start()
+    elif (userInput.lower() == "stop_writing"):
+        global writingFile 
+        writingFile = False
+    else: 
+        return
+
+
+#---------------commands------------------#
+
+
+def write_file():
+    global writingFile
+    print()
+    writingFile = True
+    nr = 0
+    print("writing file logfile.md ...")
+    with open("logfile.md", "a", encoding="utf-8") as file:
+        file.write("----------------------------\n\n")
+    while writingFile:
+        nr += 1
+        data = return_power(DEVICE_AIN)
+        now = datetime.now()
+        with open("logfile.md", "a", encoding="utf-8") as file:
+                time.sleep(20)
+                file.write(f"{now.strftime('%H:%M:%S')} -> value {nr}: -- {data} watt\n")
+    return print("\nprocess stopped")
+                
 def scan_for_smarthome_devices():
     for device in automation_devices:
         for parameter in print_parameters:
@@ -32,29 +67,10 @@ def scan_for_smarthome_devices():
 
 def return_power(ain):
     device_information = fha.get_device_information_by_identifier(ain)
-    return device_information['NewMultimeterPower']/100        
-
-def process_commands(userInput):
-    if userInput.lower() == "write_file":
-        write_file()
-    else: 
-        return
+    return device_information['NewMultimeterPower']/100    
 
 
-#---------------commands------------------#
-
-
-def write_file():
-    print("writing file measurments.md ...")
-    with open("measurements.md", "a", encoding="utf-8") as file:
-        file.write("----------------------------\n\n")
-    for nr in range(0,10):
-        data = return_power(DEVICE_AIN)
-        with open("measurements.md", "a", encoding="utf-8") as file:
-                time.sleep(20)
-                file.write(f"value {nr}: -- {data} watt\n")
-                
-
+#------------------------------------------#
 
 
 def main_program():
