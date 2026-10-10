@@ -26,6 +26,7 @@ device_ain = DEVICE_AIN
 
 writingFile = False
 isWashing = False
+startTime = None
 
 
     
@@ -46,16 +47,33 @@ def process_commands(userInput):
 
 def idle_measurements():
     global isWashing
+    global startTime
     while True:
         if not isWashing:
-            currentWatt = return_power(device_ain)
-            if currentWatt > 10:
-                isWashing = True
-                print("The washing machine is running")
-                threading.Thread(target=handle_washing, daemon=True).start()
-            time.sleep(300) 
+                currentWatt = 60
+
+                if currentWatt > 50:
+
+                    if startTime is None:
+                        #sets the start time
+                        startTime = time.time()
+                    alreadyActiveTime = time.time() - startTime
+                    print(alreadyActiveTime)
+                    #If the power is high enough over some time the washine machine was started
+                    #That prevents from errors
+                    if alreadyActiveTime >= 30:                        
+                        isWashing = True
+                        startTime = None
+                        print("The washing machine is running")
+                        threading.Thread(target=handle_washing, daemon=True).start()
+
+                else:
+
+                    if startTime is not None:
+                        startTime = None  
+                time.sleep(15)
         else:
-            time.sleep(10)
+            time.sleep(30)
 
 
 def handle_washing():
