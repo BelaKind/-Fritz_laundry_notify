@@ -24,6 +24,8 @@ automation_devices = fha.get_device_information_list()
 print_parameters = ['NewDeviceName', 'NewAIN', 'NewDeviceId', 'NewPresent']
 device_ain = DEVICE_AIN
 
+writingFile = False
+isWashing = False
 
 
     
@@ -36,8 +38,37 @@ def process_commands(userInput):
         writingFile = False
     elif (userInput.lower() == "print_devices"):
         scan_for_smarthome_devices()
+    elif (userInput.lower() == "help"):
+        print("ALL COMMANDS: \n write_file \n stop_writing \n print_devices \n help")
     else: 
         return
+
+
+def idle_measurements():
+    global isWashing
+    while True:
+        if not isWashing:
+            currentWatt = return_power(device_ain)
+            if currentWatt > 10:
+                isWashing = True
+                print("The washing machine is running")
+                threading.Thread(target=handle_washing, daemon=True).start()
+            time.sleep(300) 
+        else:
+            time.sleep(10)
+
+
+def handle_washing():
+    global isWashing
+    while isWashing:
+        currentWatt = return_power(device_ain)
+        if currentWatt < 5:
+            isWashing = False
+            print("The washing machine is finished!")
+            return 
+        time.sleep(20)
+
+
 
 
 #---------------commands------------------#
@@ -45,10 +76,9 @@ def process_commands(userInput):
 
 def write_file():
     global writingFile
-    print()
     writingFile = True
     nr = 0
-    print("writing file logfile.md ...")
+    print("\nwriting file logfile.md ...")
     with open("logfile.md", "a", encoding="utf-8") as file:
         file.write("----------------------------\n\n")
     while writingFile:
@@ -56,8 +86,8 @@ def write_file():
         data = return_power(DEVICE_AIN)
         now = datetime.now()
         with open("logfile.md", "a", encoding="utf-8") as file:
-                time.sleep(20)
                 file.write(f"{now.strftime('%H:%M:%S')} -> value {nr}: -- {data} watt\n")
+        time.sleep(20)
     return print("\nprocess stopped")
                 
 def scan_for_smarthome_devices():
@@ -75,13 +105,20 @@ def return_power(ain):
 #------------------------------------------#
 
 
+
+#-----------Main Function------------#
+
 def main_program():
-   # print(scan_for_devices())
+    global isWashing
+    isWashing = False
+    threading.Thread(target=idle_measurements, daemon=True).start()
+    print("++++++FRITZ! Laundry notify++++++")
+    print("enter your commands below (type help for a list of all commands)")
     while True:
         userInput = input("enter command (e.g write_file): ")
         process_commands(userInput)
         
-
+#------------------------------------#
 
 if __name__ == '__main__':
   main_program()
