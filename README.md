@@ -19,6 +19,8 @@ By checking the measured power at a smart outlet from FRITZ! it detects the star
 
 I also started on building a web dashboard for information and a simulation to test the script but it is not finished yet.
 
+Here is a link for the demo video: https://youtu.be/ivRJWFisXR0
+
 ## Prerequisites
 
 To run the script you need following things set up:
