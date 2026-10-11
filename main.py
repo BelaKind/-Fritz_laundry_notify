@@ -44,8 +44,10 @@ def process_commands(userInput):
         writingFile = False
     elif (userInput.lower() == "print_devices"):
         scan_for_smarthome_devices()
+    elif (userInput.lower() == "print_power"):
+        print(f"{return_power(DEVICE_AIN)} watts")
     elif (userInput.lower() == "help"):
-        print("ALL COMMANDS: \n write_file \n stop_writing \n print_devices \n help")
+        print("ALL COMMANDS: \n write_file \n stop_writing \n print_devices \n print_power \n help")
     else: 
         return
 
@@ -57,7 +59,7 @@ def idle_measurements():
         if not isWashing:
                 currentWatt = return_power(DEVICE_AIN)
 
-                if currentWatt > 50:
+                if currentWatt > 20:
 
                     if startTime is None:
                         #sets the start time
@@ -68,7 +70,7 @@ def idle_measurements():
                     if alreadyActiveTime >= 300:                        
                         isWashing = True
                         startTime = None
-                        print("The washing machine is running")
+                        print("\nThe washing machine is running")
                         threading.Thread(target=handle_washing, daemon=True).start()
 
                 else:
@@ -86,8 +88,8 @@ def handle_washing():
         currentWatt = return_power(DEVICE_AIN)
         if currentWatt < 5:
             isWashing = False
-            print("The washing machine is finished!")
-            notify_user("The washing machine is finished!") 
+            print("\nThe washing machine is finished!")
+            notify_user("The washing machine is finished! ✅") 
             return 
         time.sleep(20)
 
