@@ -5,11 +5,12 @@ This Project connects to your !FritzBox and reads the measured power of a select
 ## Screenshots
 
 Web dashboard (work in progress)
-![alt text](assets/commando_line.png)
+![alt text](assets/web_dashboard.png)
 
 
 Startup of the main.py script
-![alt text](assets/web_dashboard.png)
+![alt text](assets/commando_line.png)
+
 
 
 ## Description
