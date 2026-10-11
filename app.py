@@ -1,14 +1,14 @@
 import threading
 from flask import Flask, render_template
-from main import main_program, get_live_dashboard_data
+from main import main_program
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='Web Dashboard/templates')
 
 @app.route('/')
 def dashboard():
    
-    daten = get_live_dashboard_data()
-    return render_template('Web Dashboard/index.html')
+   
+    return render_template('index.html')
 
 def run_flask():
     print("starting webserver...")
