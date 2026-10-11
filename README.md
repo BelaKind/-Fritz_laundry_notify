@@ -44,7 +44,7 @@ CALLMEBOT_APIKEY=apikey
 PHONE_NUMBER=phone_number
 ```
 
-## Insttallation & Starup
+## Installation & Starup
 
 1. create a project folder and execute this command in this folder: git clone https://github.com/BelaKind/-Fritz_laundry_notify.git
 2. On some systems it is necessary to install all libraries in a virtual environment (check it out here: https://docs.python.org/3/library/venv.html)
